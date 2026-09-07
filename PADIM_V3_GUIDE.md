@@ -83,3 +83,13 @@ flowchart TD
 * **File thực thi**: [`scripts/train_padim_v3_carpet.py`](file:///home/tancn/project/anomalib/scripts/train_padim_v3_carpet.py)
 * **Thư mục lưu Checkpoint trọng số**: [`results/Padim_carpet/Padim/carpet/v3/weights/lightning/model.ckpt`](file:///home/tancn/project/anomalib/results/Padim_carpet/Padim/carpet/v3/weights/lightning/model.ckpt)
 * **Thư mục ảnh kết quả trực quan hóa**: [`results/Padim_carpet/Padim/carpet/v3/images/test/`](file:///home/tancn/project/anomalib/results/Padim_carpet/Padim/carpet/v3/images/test/)
+
+---
+
+## 6. Cơ Chế Tăng Cường Heatmap (Tăng Độ Tương Phản & Rực Rỡ)
+
+Mặc định, Anomalib sử dụng `normalize=False` cho anomaly map khiến các vùng dị thường mảnh chỉ hiển thị tông xanh lam/lục mờ nhạt, khó nhìn thấy. Trong PaDiM v3, visualizer được tùy biến tối ưu:
+1. **Min-Max Normalization (`normalize=True`)**:
+   Chuẩn hóa dải điểm dị thường cục bộ về thang đo $[0, 255]$ trước khi phủ colormap `Jet`. Điểm lỗi cao nhất luôn đạt sắc đỏ rực lửa (**Red Hotspot**), vùng nền bình thường hiển thị màu xanh lam đậm dịu mắt.
+2. **Dual-Overlay trên Panel 4 (`Image + Anomaly Map + Pred Mask`)**:
+   Kết hợp đồng thời bản đồ nhiệt bán trong suốt rực rỡ và đường viền contour đỏ (`pred_mask`), giúp người quan sát nhận diện ngay tức thì vị trí và ranh giới khuyết tật.

@@ -7,6 +7,8 @@ from anomalib.engine import Engine
 from anomalib.models import Padim
 from anomalib.post_processing import PostProcessor
 
+from anomalib.visualization.image import ImageVisualizer
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 # ── 1. Cấu hình Datamodule ───────────────────────────────────────────────────
@@ -51,11 +53,31 @@ post_processor = PostProcessor(
     image_sensitivity=0.52,
 )
 
+# Cấu hình Visualizer tăng cường Heatmap:
+# - colormap=True, normalize=True: chuẩn hóa min-max [0, 255] giúp dải nhiệt rực rỡ,
+#   vùng lỗi đạt đỉnh đỏ/vàng rõ rệt thay vì mờ nhạt hay xanh xám.
+# - Panel 4 overlay cả anomaly_map và pred_mask giúp định vị lỗi trực quan, rõ ràng.
+visualizer = ImageVisualizer(
+    fields=["image", "gt_mask"],
+    overlay_fields=[
+        ("image", ["anomaly_map"]),
+        ("image", ["anomaly_map", "pred_mask"]),
+    ],
+    fields_config={
+        "anomaly_map": {"colormap": True, "normalize": True},
+    },
+    overlay_fields_config={
+        "anomaly_map": {"colormap": True, "normalize": True},
+        "pred_mask": {"color": (255, 0, 0), "alpha": 1.0, "mode": "contour"},
+    },
+)
+
 model = Padim(
     backbone="resnet34",
     layers=["layer1", "layer2", "layer3"],
     n_features=350,
     post_processor=post_processor,
+    visualizer=visualizer,
 )
 
 # ── 3. Engine & Train (v3) ───────────────────────────────────────────────────
@@ -71,3 +93,12 @@ if __name__ == "__main__":
     print("\n=== Đánh giá trên test set (PaDiM v3) ===")
     results = engine.test(model=model, datamodule=datamodule)
     print("\nKết quả PaDiM v3:", results)
+
+    # Đồng bộ ảnh heatmap mới nhất vào v3
+    import shutil
+    latest_images = PROJECT_ROOT / "results/Padim_carpet/Padim/carpet/latest/images"
+    v3_images = PROJECT_ROOT / "results/Padim_carpet/Padim/carpet/v3/images"
+    if latest_images.exists():
+        print(f"Đang đồng bộ ảnh kết quả từ {latest_images} -> {v3_images}...")
+        shutil.copytree(latest_images, v3_images, dirs_exist_ok=True)
+        print("Đồng bộ ảnh hoàn tất!")
