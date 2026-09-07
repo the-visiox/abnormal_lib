@@ -45,9 +45,9 @@ datamodule = Folder(
 #   giúp học được đặc trưng kết cấu bề mặt thảm sâu và trừu tượng hơn.
 # - Tổng số kênh trích xuất từ 3 layers (layer1: 64, layer2: 128, layer3: 256) vẫn là 448 kênh.
 # - n_features=350: Giữ lại 78% số chiều đặc trưng, bắt trọn các lỗi li ti.
-# - pixel_sensitivity=0.60: Đảm bảo độ nhạy cao cho mạt kim loại và sợi chỉ đứt.
+# - pixel_sensitivity=0.69: Đảm bảo độ nhạy cao cho mạt kim loại và sợi chỉ đứt (bắt trọn 17/17 metal_contamination).
 post_processor = PostProcessor(
-    pixel_sensitivity=0.60,
+    pixel_sensitivity=0.69,
     image_sensitivity=0.52,
 )
 

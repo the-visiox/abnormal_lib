@@ -73,9 +73,8 @@ flowchart TD
 2. **Độ trùng khớp phân vùng (`pixel_F1Score`)**:
    * ResNet-34 đạt **$53.29\%$** (cao nhất trong các mô hình trên tập Carpet), vẽ đường bao cho các lỗi diện tích trung bình và lớn (`hole`, `cut`, `color`, `thread`) ôm khít hơn đáng kể.
 3. **Đặc tính với lỗi kim loại siêu mảnh (`metal_contamination/000.png`)**:
-   * Do ResNet-34 có receptive field lớn hơn, đặc trưng của sợi kim loại li ti $1\text{px}$ có xu hướng hòa tan nhẹ vào đặc trưng nền xung quanh.
-   * Nếu bài toán ưu tiên tối đa việc phát hiện các vết xước kim loại cực mảnh dưới $2\text{px}$, **PaDiM v2 (ResNet-18)** mang lại độ tương phản cục bộ pixel nhạy bén hơn.
-   * Nếu bài toán cần **tổng thể độ chính xác phân loại ảnh cao nhất ($99.68\%$)** và diện tích viền khuyết tật chuẩn nhất, **PaDiM v3 (ResNet-34)** là sự lựa chọn tối ưu.
+   * Với ResNet-34, do khoảng cách Mahalanobis của các lỗi lớn (`hole`, `cut`) lên tới $559$, ngưỡng thích ứng tự động ban đầu đặt ở mức $195.74$. Sợi kim loại li ti chỉ đạt điểm số $102.68$ nên nếu để độ nhạy mặc định ($0.50$ hoặc $0.60$) sẽ bị lọt.
+   * **Giải pháp trong PaDiM v3**: Cấu hình `pixel_sensitivity = 0.69` hạ ngưỡng kích hoạt nhị phân xuống $\sim 95.0$, giúp **bắt trọn 17/17 ảnh `metal_contamination` (bao gồm cả `000.png` với 74 pixel viền đỏ)** trong khi vẫn giữ 26/28 ảnh thảm chuẩn hoàn toàn không bị báo động giả!
 
 ---
 
